@@ -794,6 +794,55 @@
         .gift-box.open .gift-lid {
             transform: rotateX(-110deg);
         }
+        /* Tambahkan di bagian CSS */
+.gift-instruction {
+    margin: 15px auto 5px;
+    text-align: center;
+    color: var(--primary);
+    font-weight: bold;
+    animation: pulse-text 1.5s infinite alternate;
+}
+
+@keyframes pulse-text {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+.arrow-down {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin: 5px auto;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(10px); }
+}
+
+/* Tambahkan animasi untuk kado */
+.gift-box {
+    width: 100px;
+    height: 100px;
+    background-color: var(--primary);
+    position: relative;
+    margin: 10px auto 30px;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    animation: gift-attention 2s infinite alternate;
+}
+
+@keyframes gift-attention {
+    0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+    100% { transform: scale(1.1); box-shadow: 0 10px 25px rgba(233, 30, 99, 0.4); }
+}
+
+.gift-box:hover {
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 15px 30px rgba(233, 30, 99, 0.6);
+}
         
         /* Isi kado */
         .gift-content {
@@ -1286,12 +1335,17 @@
                     <div class="countdown-label">Menit</div>
                 </div>
                 <div class="countdown-item">
-                    <div class="countdown-number" id="seconds">00</div>
-                    <div class="countdown-label">Detik</div>
-                </div>
+                <div class="countdown-number" id="seconds">00</div>
+                <div class="countdown-label">Detik</div>
             </div>
-            
-            <div class="gift-box" id="giftBox">
+        </div>
+        
+        <div class="gift-instruction">
+            <p>✨ Klik kadonya untuk dengar lagu spesial! ✨</p>
+            <div class="arrow-down"><i class="fas fa-arrow-down"></i></div>
+        </div>
+        
+        <div class="gift-box" id="giftBox">
                 <div class="gift-ribbon"></div>
                 <div class="gift-lid"></div>
                 <div class="gift-content" id="giftContent">
@@ -2048,6 +2102,39 @@
                     document.getElementById('giftMessage').style.display = 'block';
                 }, 1500);
             }
+            
+            // Gift box click event
+            giftBox.addEventListener('click', function() {
+                // Putar musik
+                if (widget) {
+                    widget.play();
+                    isMusicPlaying = true;
+                    musicBtn.style.backgroundColor = '#9c27b0';
+                } else {
+                    // Fallback to regular audio
+                    fallbackAudio.play().catch(error => {
+                        console.error('Autoplay prevented:', error);
+                        alert('Klik lagi untuk memutar musik!');
+                    });
+                    isMusicPlaying = true;
+                    musicBtn.style.backgroundColor = '#9c27b0';
+                }
+                
+                // Animasi kado
+                this.classList.add('open');
+                giftContent.classList.add('show');
+                giftSparkles.classList.add('show');
+                
+                // Tampilkan pesan
+                document.getElementById('giftMessage').style.display = 'block';
+                
+                // Efek tambahan
+                createConfetti();
+                createGiftRain();
+                
+                // Hapus petunjuk
+                document.querySelector('.gift-instruction').style.display = 'none';
+            });
             
             // Initialize
             cards.forEach(card => card.addEventListener('click', flipCard));
